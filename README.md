@@ -1,1 +1,5 @@
-# FateTrial_Star_Rail
+# 崩铁攻略查询插件
+
+**版本：1.0.0**
+
+# 作者 FateTrial
