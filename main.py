@@ -26,6 +26,8 @@ class StrategyQuery(Star):
                 logging.error(f"JSON解析失败: {str(e)}")
                 yield event.plain_result(f"数据解析失败，原始响应：\n{response.text}")
                 return
+            
+            image_url = result['picture']
 
             if 'ranks1' in result:
                 formatted_msg = f"""
@@ -66,7 +68,10 @@ class StrategyQuery(Star):
 
 📝 数据来源：{result['tips']}
 """
-                yield event.plain_result(formatted_msg)
+                yield event.chain_result([
+                    Image.fromURL(image_url),
+                    Plain(formatted_msg),
+                ])
 
             if 'ranks1' not in result:
                 formatted_msg2 = f"""
@@ -103,7 +108,10 @@ class StrategyQuery(Star):
 
 📝 数据来源：{result['tips']}
 """
-                yield event.plain_result(formatted_msg2)
+                yield event.chain_result([
+                    Image.fromURL(image_url),
+                    Plain(formatted_msg2),
+                ])
 
         except requests.RequestException as e:
             logging.error(f"请求失败: {str(e)}")
