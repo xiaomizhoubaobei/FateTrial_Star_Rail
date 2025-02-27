@@ -27,8 +27,7 @@ class StrategyQuery(Star):
                 yield event.plain_result(f"数据解析失败，原始响应：\n{response.text}")
                 return
 
-            if result['code'] == '200':
-                # 格式化输出信息
+            if 'ranks1' in result:
                 formatted_msg = f"""
 ⭐ 角色攻略：{result['name']} ⭐
 
@@ -68,8 +67,43 @@ class StrategyQuery(Star):
 📝 数据来源：{result['tips']}
 """
                 yield event.plain_result(formatted_msg)
-            else:
-                yield event.plain_result("抱歉，查询失败，请稍后重试。")
+
+            if 'ranks1' not in result:
+                formatted_msg2 = f"""
+⭐ 角色攻略：{result['name']} ⭐
+
+🖼️ 角色简介：
+{result['icon']}
+
+🎯 获取途径：{result['take']}
+
+💫 光锥推荐：
+{' '.join([cone['name'] for cone in result['guangzhui']])}
+
+🔮 遗器推荐：
+{result['recommendation']['one']['early']} + {result['recommendation']['two']['early']}
+
+📊 遗器词条：
+躯干：{result['zhuct']['qu']}
+脚步：{result['zhuct']['jiao']}
+位面球：{result['zhuct']['wei']}
+连接绳：{result['zhuct']['lian']}
+
+💠 主词条优先级：
+{result['fuct']}
+
+🤝 配队推荐：
+
+1️⃣ {result['ranks']['name']}
+阵容：{result['ranks']['idstext']}
+说明：{result['ranks']['collocation']}
+
+💡 遗器说明：
+{result['bytion']}
+
+📝 数据来源：{result['tips']}
+"""
+                yield event.plain_result(formatted_msg2)
 
         except requests.RequestException as e:
             logging.error(f"请求失败: {str(e)}")
